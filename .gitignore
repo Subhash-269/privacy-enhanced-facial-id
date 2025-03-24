@@ -1,0 +1,5 @@
+# Ignore TensorBoard logs
+runs/
+
+# Ignore test images
+test_images/
