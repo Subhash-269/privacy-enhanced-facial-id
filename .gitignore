@@ -1,5 +1,7 @@
 # Ignore TensorBoard logs
 runs/
+*.pkl
+*.png
 
 # Ignore test images
 test_images/
