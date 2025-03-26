@@ -3,11 +3,31 @@ import base64
 import pickle  # <-- for serialization
 from phe import paillier
 from tqdm import tqdm
+import math
 
 def generate_paillier_keypair():
     return paillier.generate_paillier_keypair()
 
-def encode_and_encrypt_image(image_path, public_key):
+def determine_chunk_size(b64_length, max_chunks=64, min_chunk_size=1):
+    """
+    Decide a suitable chunk size so the total number of chunks
+    does not exceed 'max_chunks'. Ensures we don't go below a
+    minimum chunk size.
+    """
+    # If the Base64 string is empty or very small, just return min_chunk_size
+    print("b64_length",b64_length)
+    
+    if b64_length <= min_chunk_size:
+        return min_chunk_size
+    
+    # Calculate chunk size by dividing total length by max_chunks
+    chunk_size = math.ceil(b64_length / max_chunks)
+    
+    # Ensure it's at least 'min_chunk_size'
+    chunk_size = max(chunk_size, min_chunk_size)
+    return chunk_size
+
+def encode_and_encrypt_image(image_path, public_key, max_chunks=64):
     start_time = time.time()
     
     # 1. Read raw bytes from image
@@ -26,6 +46,9 @@ def encode_and_encrypt_image(image_path, public_key):
     # 3. Chunk the Base64 string into smaller pieces
     t0 = time.time()
     chunk_size = 256
+    b64_length = len(b64_string)
+    chunk_size = determine_chunk_size(b64_length, max_chunks=max_chunks, min_chunk_size=16)
+    print(f"[encoder] Chosen chunk_size = {chunk_size}")
     chunks = []
     start_time = time.time()
     print("[encoder] Starting encryption...")
@@ -66,7 +89,7 @@ if __name__ == "__main__":
     print(f"[encoder] Key generation took {end_keygen - start_keygen:.4f} seconds.")
     
     # 2. Encrypt the image
-    ciphertexts = encode_and_encrypt_image(image_path, pub_key)
+    ciphertexts = encode_and_encrypt_image(image_path, pub_key, max_chunks=256)
     print(f"[encoder] Number of encrypted chunks: {len(ciphertexts)}")
 
     # 3. Save ciphertexts + keys to disk
