@@ -3,6 +3,7 @@ runs/
 *.pkl
 *.png
 *.jpg
+*.pth
 
 # Ignore test images
 test_images/
