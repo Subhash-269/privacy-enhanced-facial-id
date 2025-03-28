@@ -2,6 +2,8 @@
 runs/
 *.pkl
 *.png
+*.jpg
 
 # Ignore test images
 test_images/
+face_recog-dataset/
