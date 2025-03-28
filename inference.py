@@ -17,14 +17,14 @@ transform = transforms.Compose([
 # Load the model architecture
 model = models.resnet18(pretrained=False)
 num_ftrs = model.fc.in_features
-model.fc = nn.Linear(num_ftrs, 5)
+model.fc = nn.Linear(num_ftrs, 28)
 
 # Load the saved model weights
 model.load_state_dict(torch.load('FRT-No_encryption.pth'))
 model = model.to(device)
 
 # Load dataset to get class names
-dataset = ImageFolder(root='Five_Faces/', transform=transform)
+dataset = ImageFolder(root='face_recog-dataset/', transform=transform)
 
 # Inference example
 def predict_image(image_path):
@@ -37,6 +37,8 @@ def predict_image(image_path):
     return dataset.classes[predicted.item()]
 
 # Example usage
-image_path = 'test_images\licensed-image.jpeg'
+image_path = 'test_images\images.jpeg'
+# image_path = "test_images\modi-black-mr1.jpg"
+# image_path = "test_images\images (1).jpeg"
 predicted_class = predict_image(image_path)
 print(f'Predicted class: {predicted_class}')
